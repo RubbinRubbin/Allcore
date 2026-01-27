@@ -33,6 +33,15 @@ Questo progetto implementa un **assistente virtuale** specializzato in consulenz
                         └─────────────────┘
 ```
 
+### Perche Frontend e Backend Separati?
+
+Questa e un'architettura **monorepo** standard nell'industria:
+
+- **Linguaggi diversi**: TypeScript per UI, Python per AI/ML (ecosistema migliore)
+- **Deploy indipendente**: Frontend su Vercel, Backend su qualsiasi server
+- **Scalabilita separata**: Puoi scalare il backend senza toccare il frontend
+- **Team paralleli**: Sviluppatori frontend e backend lavorano senza conflitti
+
 ### Frontend (Next.js 14)
 - Interfaccia utente moderna e responsive
 - Design ispirato allo stile Allcore (blu #1e73be)
