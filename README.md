@@ -225,5 +225,3 @@ allcore/
 | POST | `/api/chat` | Chat con streaming |
 
 ---
-
-Progetto sviluppato come demo per il colloquio presso **Allcore Spa** - Consulenza fiscale per PMI.
