@@ -40,7 +40,7 @@ export default function InputBar({ onSend, disabled, suggestions = [], onSuggest
   return (
     <div className="border-t border-gray-200 bg-white px-4 py-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-end gap-3 bg-[#f7f8f9] rounded-2xl px-4 py-3">
+        <div className="flex items-center gap-3 bg-[#f7f8f9] rounded-2xl px-4 py-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -49,7 +49,7 @@ export default function InputBar({ onSend, disabled, suggestions = [], onSuggest
             placeholder="Scrivi una domanda fiscale..."
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-gray-800 placeholder-gray-500 text-sm leading-relaxed max-h-[150px]"
+            className="flex-1 bg-transparent resize-none outline-none text-gray-800 placeholder-gray-500 text-sm leading-relaxed max-h-[150px] py-0.5"
           />
           <button
             onClick={handleSubmit}
