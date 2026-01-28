@@ -1,6 +1,6 @@
 # Assistente Fiscale AI - Allcore
 
-Un chatbot intelligente per la consulenza fiscale alle PMI italiane, sviluppato per Allcore Spa.
+Un chatbot intelligente per la consulenza fiscale alle PMI italiane
 
 ---
 
