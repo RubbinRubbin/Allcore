@@ -75,8 +75,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       <aside
         className={`
           fixed md:relative inset-y-0 left-0 z-40 w-56 bg-white border-r border-gray-200
-          transform transition-all duration-300 ease-in-out
-          ${isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 md:w-0 md:border-0"}
+          transform transition-all duration-300 ease-in-out overflow-hidden
+          ${isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 md:w-0 md:border-0 md:pointer-events-none"}
         `}
       >
         <div className="flex flex-col h-full w-56">
