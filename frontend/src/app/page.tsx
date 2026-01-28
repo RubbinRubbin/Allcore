@@ -1,11 +1,9 @@
-import Header from "@/components/Header";
-import Chat from "@/components/Chat";
+import AppShell from "@/components/AppShell";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f7f8f9]">
-      <Header />
-      <Chat />
+    <main className="min-h-screen">
+      <AppShell />
     </main>
   );
 }

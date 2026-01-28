@@ -1,9 +1,8 @@
+import { Message } from "./types";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
 
-export interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+export type { Message };
 
 export async function sendMessage(
   messages: Message[],
@@ -38,6 +37,25 @@ export async function sendMessage(
     const chunk = decoder.decode(value, { stream: true });
     onChunk(chunk);
   }
+}
+
+export async function generateChatTitle(
+  userMessage: string,
+  assistantResponse: string
+): Promise<string> {
+  const messages: Message[] = [
+    {
+      role: "user",
+      content: `Basandoti su questa conversazione, genera un titolo breve (massimo 5 parole) che descriva l'argomento principale. Rispondi SOLO con il titolo, senza punteggiatura finale.\n\nDomanda utente: "${userMessage}"\n\nRisposta assistente: "${assistantResponse.substring(0, 200)}"`,
+    },
+  ];
+
+  let title = "";
+  await sendMessage(messages, (chunk) => {
+    title += chunk;
+  });
+
+  return title.trim().replace(/^["']|["']$/g, "").substring(0, 60) || "Nuova chat";
 }
 
 export async function checkHealth(): Promise<boolean> {
