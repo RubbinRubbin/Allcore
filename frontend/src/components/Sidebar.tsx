@@ -5,7 +5,7 @@ import { ChatSession } from "@/lib/types";
 
 interface SidebarProps {
   isOpen: boolean;
-  onClose: () => void;
+  onToggle: () => void;
 }
 
 function getDateGroup(timestamp: number): string {
@@ -38,7 +38,7 @@ function groupChatsByDate(chats: ChatSession[]): Map<string, ChatSession[]> {
   return groups;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { state, dispatch, activeChat } = useChatContext();
   const { sessions, isLoading } = state;
 
@@ -66,24 +66,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Backdrop (mobile only) */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/30 md:hidden"
-          onClick={onClose}
+          className="fixed inset-0 z-30 bg-black/30 md:hidden transition-opacity duration-300"
+          onClick={onToggle}
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={`
-          fixed md:relative inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          fixed md:relative inset-y-0 left-0 z-40 w-56 bg-white border-r border-gray-200
+          transform transition-all duration-300 ease-in-out
+          ${isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 md:w-0 md:border-0"}
         `}
       >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+        <div className="flex flex-col h-full w-56">
+          {/* Header - same height as main header (57px) */}
+          <div className="flex items-center justify-between px-3 h-[57px] border-b border-gray-200">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#1e73be] rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-[#1e73be] rounded-lg flex items-center justify-center">
                 <svg
                   className="w-5 h-5 text-white"
                   viewBox="0 0 24 24"
@@ -96,8 +96,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
             {/* Close button */}
             <button
-              onClick={onClose}
-              className="p-2 -mr-2 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={onToggle}
+              className="p-2 -mr-1 rounded-lg hover:bg-gray-100 transition-colors"
               aria-label="Chiudi sidebar"
             >
               <svg
@@ -110,26 +110,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                  d="M11 19l-7-7 7-7"
                 />
               </svg>
             </button>
           </div>
 
           {/* New Chat Button */}
-          <div className="p-4">
+          <div className="p-3">
             <button
               onClick={handleNewChat}
               disabled={isLoading}
               className={`
-                w-full flex items-center justify-center gap-2 px-4 py-3
-                bg-[#1e73be] text-white rounded-xl font-medium
+                w-full flex items-center justify-center gap-2 px-3 py-2.5
+                bg-[#1e73be] text-white rounded-lg font-medium text-sm
                 transition-all
                 ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1a5fa0] active:scale-[0.98]"}
               `}
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -150,28 +150,28 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {Array.from(groupedChats.entries()).map(([group, chats]) => {
               if (chats.length === 0) return null;
               return (
-                <div key={group} className="mb-4">
-                  <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <div key={group} className="mb-3">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     {group}
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {chats.map((chat) => (
                       <div
                         key={chat.id}
                         onClick={() => handleSelectChat(chat.id)}
                         className={`
-                          group flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer
+                          group flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer
                           transition-colors
                           ${isLoading ? "pointer-events-none opacity-50" : ""}
                           ${
                             activeChat?.id === chat.id
-                              ? "bg-[#1e73be]/10 text-[#1e73be] border-l-[3px] border-[#1e73be]"
+                              ? "bg-[#1e73be]/10 text-[#1e73be] border-l-2 border-[#1e73be]"
                               : "hover:bg-gray-50 text-gray-700"
                           }
                         `}
                       >
                         <svg
-                          className={`w-4 h-4 flex-shrink-0 ${
+                          className={`w-3.5 h-3.5 flex-shrink-0 ${
                             activeChat?.id === chat.id
                               ? "text-[#1e73be]"
                               : "text-gray-400"
@@ -187,7 +187,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                           />
                         </svg>
-                        <span className="flex-1 text-sm truncate">
+                        <span className="flex-1 text-xs truncate">
                           {chat.title}
                         </span>
                         <button
@@ -201,7 +201,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                           aria-label="Elimina chat"
                         >
                           <svg
-                            className="w-4 h-4"
+                            className="w-3.5 h-3.5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"

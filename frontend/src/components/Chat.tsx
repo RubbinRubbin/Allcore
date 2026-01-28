@@ -99,7 +99,7 @@ export default function Chat() {
   // Don't render until hydrated
   if (!state.hydrated) {
     return (
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col h-full">
         <div className="flex-1 flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-[#1e73be] border-t-transparent rounded-full animate-spin" />
         </div>
@@ -108,8 +108,8 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      {/* Messages Area */}
+    <div className="flex flex-col h-full">
+      {/* Messages Area - this is the only scrollable part */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           {messages.map((message, index) => (
@@ -128,13 +128,15 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Input Area */}
-      <InputBar
-        onSend={handleSend}
-        disabled={isLoading}
-        suggestions={messages.length === 1 && !isLoading ? SUGGESTIONS : []}
-        onSuggestion={handleSuggestion}
-      />
+      {/* Input Area - fixed at bottom */}
+      <div className="flex-shrink-0">
+        <InputBar
+          onSend={handleSend}
+          disabled={isLoading}
+          suggestions={messages.length === 1 && !isLoading ? SUGGESTIONS : []}
+          onSuggestion={handleSuggestion}
+        />
+      </div>
     </div>
   );
 }
