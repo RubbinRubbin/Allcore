@@ -10,6 +10,7 @@ export default function Chat() {
   const { state, dispatch, activeChat } = useChatContext();
   const { isLoading, streamingContent } = state;
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const titleGenerationStarted = useRef(false);
 
   const messages = useMemo(
     () => activeChat?.messages || [],
@@ -21,13 +22,22 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
 
+  // Reset title generation flag when active chat changes
+  useEffect(() => {
+    titleGenerationStarted.current = false;
+  }, [activeChat?.id]);
+
   const handleSend = async (content: string) => {
     if (!activeChat) return;
+
+    const chatId = activeChat.id;
+    const shouldGenerateTitle =
+      activeChat.title === "Nuova chat" && messages.length === 1;
 
     // Add user message
     dispatch({
       type: "ADD_MESSAGE",
-      chatId: activeChat.id,
+      chatId,
       message: { role: "user", content },
     });
     dispatch({ type: "SET_LOADING", isLoading: true });
@@ -41,28 +51,33 @@ export default function Chat() {
       await sendMessage(messagesForApi, (chunk) => {
         fullResponse += chunk;
         dispatch({ type: "SET_STREAMING", content: fullResponse });
+
+        // Generate title during streaming (after ~50 chars of response)
+        if (
+          shouldGenerateTitle &&
+          !titleGenerationStarted.current &&
+          fullResponse.length > 50
+        ) {
+          titleGenerationStarted.current = true;
+          generateChatTitle(content, fullResponse)
+            .then((title) => {
+              dispatch({ type: "SET_TITLE", chatId, title });
+            })
+            .catch(console.error);
+        }
       });
 
       // Add complete assistant message
       dispatch({
         type: "ADD_MESSAGE",
-        chatId: activeChat.id,
+        chatId,
         message: { role: "assistant", content: fullResponse },
       });
-
-      // Generate title if this is the first exchange (welcome + user + assistant = 3 messages)
-      if (activeChat.title === "Nuova chat" && messages.length === 1) {
-        generateChatTitle(content, fullResponse)
-          .then((title) => {
-            dispatch({ type: "SET_TITLE", chatId: activeChat.id, title });
-          })
-          .catch(console.error);
-      }
     } catch (error) {
       console.error("Chat error:", error);
       dispatch({
         type: "ADD_MESSAGE",
-        chatId: activeChat.id,
+        chatId,
         message: {
           role: "assistant",
           content:
